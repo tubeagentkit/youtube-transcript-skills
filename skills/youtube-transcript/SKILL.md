@@ -144,10 +144,13 @@ inventing fake timestamps.
 
 Same base URL, auth, and error shape as above.
 
-**Search YouTube** - `GET /search?q=<query>&country=us&language=en&limit=20` (1
-credit/page). Add `page_token` from a previous response's
-`data.pagination.next_page_token` to fetch the next page. The bundled
-`scripts/fetch_search.sh` wraps this call.
+**Search YouTube** - `GET /search?q=<query>&country=us&language=en&type=video&limit=20`
+(1 credit/page). `type` is `video` (default) or `channel` - restricts
+results to one type (video results in `data.video_results`, channel results
+in `data.channel_results`), it does not mix both in one call. Add
+`page_token` from a previous response's `data.continuation_token` to fetch
+the next page (works for both types). The bundled `scripts/fetch_search.sh`
+wraps this call.
 
 **Resolve a channel handle to its channel ID** - `GET /resolve?handle=@mkbhd`
 (free, 0 credits). Accepts a channel ID, a channel URL, or a bare `@handle`.
@@ -176,9 +179,10 @@ identical opaque-token convention as channel/videos. The bundled
 `scripts/fetch_channel_search.sh` wraps this call.
 
 **Playlist videos** - `GET /playlist?list=<playlist ID or URL>` (1 credit/page).
-Currently returns the first page only; the response's `data.has_more` tells you
-if there are more, but there is no pagination parameter yet - don't invent one.
-The bundled `scripts/fetch_playlist.sh` wraps this call.
+Fully paginated: provide either `list` (first page) or `continuation` (from a
+previous response's `data.continuation_token` - opaque, pass it back
+verbatim, `null` means no more pages). The bundled `scripts/fetch_playlist.sh`
+wraps this call.
 
 ## Errors
 
