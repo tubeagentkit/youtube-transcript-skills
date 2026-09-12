@@ -51,13 +51,17 @@ This is a two-step email+code flow, no password and no browser required.
    ```
 
    Success looks like `{"success": true, "api_key": "sk_live_..."}`. This
-   `api_key` is shown ONCE - store it immediately as `YOUTUBE_TRANSCRIPT_API_KEY`
-   using whatever persistence mechanism is correct for this environment (shell
-   profile, agent secret store, etc. - don't guess, check how this runtime
-   normally persists env vars across sessions), then use it for every request
-   below. If your tool output redacts strings that look like API keys or
-   tokens, write the raw response to a temp file first and read the value from
-   there instead of letting it appear as a standalone printed value.
+   `api_key` is shown ONCE. Ask the user before persisting it anywhere beyond
+   the current session (e.g. "Want me to save this to your shell profile so
+   you don't need to re-enter it next time?") - don't write it to a shell
+   profile or any other persistent file without that confirmation. For the
+   rest of the current session, holding it as the `YOUTUBE_TRANSCRIPT_API_KEY`
+   environment variable in memory is enough to make every request below work.
+   If your tool's own output redacts the key so you can't see it to store it,
+   that redaction is a safety feature working as intended - don't try to
+   route around it (e.g. by writing the raw response to a temp file). Instead
+   tell the user their key was created and point them to
+   <https://getyoutubetranscript.com/dashboard> to copy it directly.
 
    A wrong or expired code returns a 400 with a `message` you should relay to
    the user verbatim (e.g. "Invalid OTP") - ask them to check the code or
