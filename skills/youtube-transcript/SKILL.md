@@ -11,6 +11,11 @@ the [getyoutubetranscript.com](https://getyoutubetranscript.com) REST API, so
 you can summarize, quote, search, or analyze a video's actual spoken content
 without the user having to copy-paste it in by hand.
 
+**Scope**: this skill only makes outbound HTTPS `curl` requests to
+`getyoutubetranscript.com` endpoints listed below (plus, during first-time
+setup, an email address the user explicitly provides - see below). It runs no
+other shell commands and installs nothing.
+
 ## Prerequisite: an API key
 
 Every call needs an API key. Look for one, in this order:
@@ -27,9 +32,13 @@ it set as `YOUTUBE_TRANSCRIPT_API_KEY` so you don't have to ask again.
 
 This is a two-step email+code flow, no password and no browser required.
 
-1. Ask the user: *"I don't have an API key yet. What's the email you'd like
-   to use? I'll send a 6-digit code to verify it and set you up with a free
-   key (100 credits, no card required)."*
+1. Ask the user for explicit consent before sending anything, naming the
+   destination service: *"I don't have an API key yet. If you give me an
+   email address, I'll send it to getyoutubetranscript.com to create a free
+   account (100 credits, no card required) and verify it with a 6-digit
+   code. What email would you like to use?"* Only proceed once they've
+   given you an email in response to that - don't reuse an email already
+   present in this conversation for an unrelated purpose without asking.
 2. Send the code:
 
    ```bash
@@ -99,9 +108,12 @@ curl -s "https://getyoutubetranscript.com/api/v1/transcript?v=<VIDEO_ID_OR_URL>&
 
 - `v` accepts a bare 11-char video ID OR any full YouTube URL (`youtube.com/watch?v=...`,
   `youtu.be/...`, `/shorts/...`) - don't parse the URL yourself, just pass it through.
-- `language` is optional, defaults to `en`. Use the response's own error if a
-  requested language isn't available (see Errors below) rather than guessing
-  which languages exist.
+- `language` is optional and defaults to `en` only when the user hasn't said
+  otherwise - the example above uses `en` for illustration, not because
+  English should be forced. If the user asks for a specific language, pass
+  that instead of the default. Use the response's own error if a requested
+  language isn't available (see Errors below) rather than guessing which
+  languages exist.
 - The bundled `scripts/fetch_transcript.sh` wraps this exact call if you'd
   rather invoke a script than hand-build the curl command.
 
@@ -134,15 +146,18 @@ Same base URL, auth, and error shape as above.
 
 **Search YouTube** - `GET /search?q=<query>&country=us&language=en&limit=20` (1
 credit/page). Add `page_token` from a previous response's
-`data.pagination.next_page_token` to fetch the next page.
+`data.pagination.next_page_token` to fetch the next page. The bundled
+`scripts/fetch_search.sh` wraps this call.
 
 **Resolve a channel handle to its channel ID** - `GET /resolve?handle=@mkbhd`
 (free, 0 credits). Accepts a channel ID, a channel URL, or a bare `@handle`.
+The bundled `scripts/resolve_channel.sh` wraps this call.
 
 **Channel info + latest videos** - `GET /channel/latest?channel=@mkbhd`
 (free, 0 credits). Full channel metadata (subscribers, description, avatar)
 plus whatever "Latest Videos" the channel's home tab is currently showing -
-not the complete upload history. For that, use channel/videos below.
+not the complete upload history. For that, use channel/videos below. The
+bundled `scripts/fetch_channel_latest.sh` wraps this call.
 
 **All of a channel's uploaded videos** - `GET
 /channel/videos?channel=@mkbhd` (1 credit/page). Provide either `channel`
@@ -150,16 +165,20 @@ not the complete upload history. For that, use channel/videos below.
 scrape, not a free re-read). The response's `data.continuation_token`, when
 non-null, is an opaque string - pass it back verbatim as `continuation` to
 get the next page; never construct or decode it yourself. `null` means
-there are no more pages.
+there are no more pages. The bundled `scripts/fetch_channel_videos.sh` wraps
+this call (pass `""` as the first argument when using a continuation token -
+see the script's own usage comment).
 
 **Search within a channel** - `GET
 /channel/search?channel=@mkbhd&q=iphone` (1 credit/page). Same `channel` +
 `q` for the first page, or `continuation` alone for subsequent pages -
-identical opaque-token convention as channel/videos.
+identical opaque-token convention as channel/videos. The bundled
+`scripts/fetch_channel_search.sh` wraps this call.
 
 **Playlist videos** - `GET /playlist?list=<playlist ID or URL>` (1 credit/page).
 Currently returns the first page only; the response's `data.has_more` tells you
 if there are more, but there is no pagination parameter yet - don't invent one.
+The bundled `scripts/fetch_playlist.sh` wraps this call.
 
 ## Errors
 
