@@ -1,6 +1,6 @@
 ---
 name: youtube-transcript
-description: Use when the user wants a YouTube video's transcript fetched, wants to summarize/analyze/quote a YouTube video by its spoken content, wants to search YouTube (globally or a channel handle's videos), wants a channel handle resolved to its channel ID, or wants the videos in a YouTube playlist. Calls the getyoutubetranscript.com public API - requires an API key (free tier available, no card required).
+description: Use when the user wants a YouTube video's transcript fetched, wants to summarize/analyze/quote a YouTube video by its spoken content, wants to search YouTube (globally or a channel handle's videos), wants a channel handle resolved to its channel ID, wants the videos in a YouTube playlist, or wants to check their remaining API credit balance. Calls the getyoutubetranscript.com public API - requires an API key (free tier available, no card required).
 source: https://github.com/tubeagentkit/youtube-transcript-skills
 ---
 
@@ -91,7 +91,10 @@ of creating a new one.
 Every response is metered: 1 credit per successful call (free tier included;
 failed calls are never charged). If a call returns `402 PAYMENT_REQUIRED`, tell
 the user they're out of credits and link them to the dashboard to top up or
-upgrade - don't retry the same call expecting a different result.
+upgrade - don't retry the same call expecting a different result. Check
+`GET /credits` (see below) first if you're about to make many calls in a row
+(e.g. paginating a large playlist or channel) and want to confirm there's
+enough balance up front.
 
 ## Base URL and auth
 
@@ -192,6 +195,13 @@ previous response's `data.continuation_token` - opaque, pass it back
 verbatim, `null` means no more pages). The bundled `scripts/fetch_playlist.sh`
 wraps this call.
 
+**Check remaining credit balance** - `GET /credits` (free, 0 credits). Returns
+`plan_credits_left`, `topup_credits_left`, the active `plan`
+(`free`/`monthly`/`yearly`), and `rate_limit_per_minute`. Useful before a
+batch of paginated calls (e.g. paging through a long playlist or channel) to
+confirm there's enough balance rather than discovering a 402 partway through.
+The bundled `scripts/check_credits.sh` wraps this call.
+
 ## Errors
 
 Every error is JSON with a stable `code` you can branch on, plus a matching
@@ -201,7 +211,7 @@ HTTP status:
 |---|---|---|
 | 400 | `BAD_REQUEST` / `MISSING_URL` / `INVALID_URL` | Missing or malformed parameter |
 | 401 | `MISSING_API_KEY` / `INVALID_API_KEY` | No key provided, or it's invalid/revoked |
-| 402 | `PAYMENT_REQUIRED` | Out of credits - direct the user to the dashboard, don't retry |
+| 402 | `PAYMENT_REQUIRED` | Out of credits - direct the user to the dashboard, don't retry. `GET /credits` confirms the balance without spending anything |
 | 404 | `VIDEO_UNAVAILABLE` / `TRANSCRIPT_NOT_FOUND` / `TRANSCRIPT_DISABLED` | Video/resource doesn't exist, or has no transcript |
 | 404 | `LANGUAGE_NOT_AVAILABLE` | The requested `language` isn't available for this video |
 | 429 | `RATE_LIMITED` | Too many requests for the key's plan tier - back off, don't hammer it in a retry loop |

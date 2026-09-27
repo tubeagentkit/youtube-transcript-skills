@@ -93,6 +93,7 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 | `GET /channel/videos` | 1 credit/page | Every video a channel has ever uploaded, fully paginated |
 | `GET /channel/search` | 1 credit/page | Search within one channel's videos, fully paginated |
 | `GET /playlist` | 1 credit/page | Every video in a playlist, fully paginated |
+| `GET /credits` | Free | Remaining credit balance, plan, and rate limit for this key |
 
 ---
 
