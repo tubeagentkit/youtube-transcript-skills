@@ -1,4 +1,4 @@
-# YouTube Transcript Skill 🎬
+# YouTube Transcript Agent Skill for Claude Code, Cursor & Codex 🎬
 
 [![skills.sh](https://skills.sh/b/tubeagentkit/youtube-transcript-skills)](https://skills.sh/tubeagentkit/youtube-transcript-skills)
 [![License](https://img.shields.io/badge/License-MIT-4CAF50?style=for-the-badge)](./LICENSE)
@@ -157,6 +157,15 @@ getyoutubetranscript.com is an independent product and is not affiliated with or
 ## Contributing
 
 Issues and PRs welcome.
+
+## Related projects
+
+Other ways to use the [GetYouTubeTranscript API](https://getyoutubetranscript.com):
+
+- [youtube-mcp](https://github.com/tubeagentkit/youtube-mcp): Remote YouTube MCP server for Claude, ChatGPT, Cursor and VS Code
+- [n8n-nodes-getyoutubetranscript](https://github.com/tubeagentkit/n8n-nodes-getyoutubetranscript): n8n community node, also usable as an AI Agent tool
+- [python-sdk](https://github.com/tubeagentkit/python-sdk): YouTube Transcript API SDK for Python
+- [node-sdk](https://github.com/tubeagentkit/node-sdk): YouTube Transcript API SDK for Node.js / TypeScript
 
 ## License
 
