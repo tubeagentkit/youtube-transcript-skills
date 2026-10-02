@@ -9,11 +9,8 @@ set -euo pipefail
 
 CHANNEL="${1:?Usage: fetch_channel_latest.sh <@handle_or_url_or_id>}"
 
-if [ -z "${YOUTUBE_TRANSCRIPT_API_KEY:-}" ]; then
-    echo "Error: set YOUTUBE_TRANSCRIPT_API_KEY first (get a free key at https://getyoutubetranscript.com/dashboard)" >&2
-    exit 1
-fi
+source "$(dirname "$0")/lib/key.sh"
 
-curl -s -G "https://getyoutubetranscript.com/api/v1/channel/latest" \
+curl -s -G "${API_BASE}/channel/latest" \
     --data-urlencode "channel=${CHANNEL}" \
     -H "Authorization: Bearer ${YOUTUBE_TRANSCRIPT_API_KEY}"

@@ -17,17 +17,14 @@ if [ -z "$PLAYLIST" ] && [ -z "$CONTINUATION" ]; then
     exit 1
 fi
 
-if [ -z "${YOUTUBE_TRANSCRIPT_API_KEY:-}" ]; then
-    echo "Error: set YOUTUBE_TRANSCRIPT_API_KEY first (get a free key at https://getyoutubetranscript.com/dashboard)" >&2
-    exit 1
-fi
+source "$(dirname "$0")/lib/key.sh"
 
 if [ -n "$CONTINUATION" ]; then
-    curl -s -G "https://getyoutubetranscript.com/api/v1/playlist" \
+    curl -s -G "${API_BASE}/playlist" \
         --data-urlencode "continuation=${CONTINUATION}" \
         -H "Authorization: Bearer ${YOUTUBE_TRANSCRIPT_API_KEY}"
 else
-    curl -s -G "https://getyoutubetranscript.com/api/v1/playlist" \
+    curl -s -G "${API_BASE}/playlist" \
         --data-urlencode "list=${PLAYLIST}" \
         -H "Authorization: Bearer ${YOUTUBE_TRANSCRIPT_API_KEY}"
 fi

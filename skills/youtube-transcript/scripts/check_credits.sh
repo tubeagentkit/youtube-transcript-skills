@@ -6,10 +6,7 @@
 #   YOUTUBE_TRANSCRIPT_API_KEY=sk_live_... ./check_credits.sh
 set -euo pipefail
 
-if [ -z "${YOUTUBE_TRANSCRIPT_API_KEY:-}" ]; then
-    echo "Error: set YOUTUBE_TRANSCRIPT_API_KEY first (get a free key at https://getyoutubetranscript.com/dashboard)" >&2
-    exit 1
-fi
+source "$(dirname "$0")/lib/key.sh"
 
-curl -s "https://getyoutubetranscript.com/api/v1/credits" \
+curl -s "${API_BASE}/credits" \
     -H "Authorization: Bearer ${YOUTUBE_TRANSCRIPT_API_KEY}"

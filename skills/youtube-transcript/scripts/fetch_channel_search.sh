@@ -18,17 +18,14 @@ if [ -z "$CONTINUATION" ] && { [ -z "$CHANNEL" ] || [ -z "$QUERY" ]; }; then
     exit 1
 fi
 
-if [ -z "${YOUTUBE_TRANSCRIPT_API_KEY:-}" ]; then
-    echo "Error: set YOUTUBE_TRANSCRIPT_API_KEY first (get a free key at https://getyoutubetranscript.com/dashboard)" >&2
-    exit 1
-fi
+source "$(dirname "$0")/lib/key.sh"
 
 if [ -n "$CONTINUATION" ]; then
-    curl -s -G "https://getyoutubetranscript.com/api/v1/channel/search" \
+    curl -s -G "${API_BASE}/channel/search" \
         --data-urlencode "continuation=${CONTINUATION}" \
         -H "Authorization: Bearer ${YOUTUBE_TRANSCRIPT_API_KEY}"
 else
-    curl -s -G "https://getyoutubetranscript.com/api/v1/channel/search" \
+    curl -s -G "${API_BASE}/channel/search" \
         --data-urlencode "channel=${CHANNEL}" \
         --data-urlencode "q=${QUERY}" \
         -H "Authorization: Bearer ${YOUTUBE_TRANSCRIPT_API_KEY}"

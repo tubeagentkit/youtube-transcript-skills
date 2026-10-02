@@ -11,12 +11,9 @@ set -euo pipefail
 VIDEO="${1:?Usage: fetch_transcript.sh <video_id_or_url> [language]}"
 LANGUAGE="${2:-en}"
 
-if [ -z "${YOUTUBE_TRANSCRIPT_API_KEY:-}" ]; then
-    echo "Error: set YOUTUBE_TRANSCRIPT_API_KEY first (get a free key at https://getyoutubetranscript.com/dashboard)" >&2
-    exit 1
-fi
+source "$(dirname "$0")/lib/key.sh"
 
-curl -s -G "https://getyoutubetranscript.com/api/v1/transcript" \
+curl -s -G "${API_BASE}/transcript" \
     --data-urlencode "v=${VIDEO}" \
     --data-urlencode "language=${LANGUAGE}" \
     -H "Authorization: Bearer ${YOUTUBE_TRANSCRIPT_API_KEY}"
