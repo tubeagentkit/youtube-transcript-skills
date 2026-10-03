@@ -125,8 +125,13 @@ curl -s "https://getyoutubetranscript.com/api/v1/transcript?v=<VIDEO_ID_OR_URL>&
   that instead of the default. Use the response's own error if a requested
   language isn't available (see Errors below) rather than guessing which
   languages exist.
+- `timestamps=true` is optional: add it when the user wants timestamps, wants
+  to find or quote where something is said, or wants chapters or a timeline.
+  The response then also has `segments` (see below). Leave it off otherwise;
+  it roughly doubles the response. Same credit cost either way.
 - The bundled `scripts/fetch_transcript.sh` wraps this exact call if you'd
-  rather invoke a script than hand-build the curl command.
+  rather invoke a script than hand-build the curl command
+  (`fetch_transcript.sh <video> [language] [timestamps]`).
 
 Successful response:
 
@@ -146,10 +151,20 @@ Successful response:
 }
 ```
 
-`transcript` is the full spoken text as one plain string - there is no
-per-line timestamp breakdown in this API. If the user specifically needs
-timestamps, tell them that's not something this endpoint provides rather than
-inventing fake timestamps.
+`transcript` is the full spoken text as one plain string. With
+`timestamps=true` the response also includes `segments`, one object per
+caption line with `start` and `duration` in seconds:
+
+```json
+"segments": [
+  { "start": 1.2, "duration": 2.16, "text": "All right, so here we are, in front of the" },
+  { "start": 3.36, "duration": 1.8, "text": "elephants" }
+]
+```
+
+To cite a moment, link `https://www.youtube.com/watch?v=<id>&t=<floor(start)>s`.
+Only quote times that come from `segments`; never estimate them from the
+plain `transcript`.
 
 ## Other available endpoints
 

@@ -53,6 +53,7 @@ Just install and ask. No config, no code — talk to your agent in plain English
 | Task | Example Prompt |
 |---|---|
 | **Get a transcript** | "Summarize this video: [URL]" |
+| **Find where something is said** | "At what point does this video talk about pricing? Link the moment." |
 | **Search YouTube** | "Find videos about machine learning" |
 | **Find a channel** | "Search YouTube for MKBHD's channel" |
 | **Browse a channel** | "What has @veritasium posted recently?" |
@@ -86,7 +87,7 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 
 | Endpoint | Cost | What it does |
 |---|---|---|
-| `GET /transcript` | 1 credit | Full transcript + title/author/thumbnail for one video |
+| `GET /transcript` | 1 credit | Full transcript + title/author/thumbnail for one video; add `timestamps=true` for per-line `segments` |
 | `GET /search` | 1 credit/page | Search YouTube for videos or channels, paginated |
 | `GET /resolve` | Free | Resolve a channel handle/URL/ID to its canonical channel ID |
 | `GET /channel/latest` | Free | Channel metadata + its home tab's "Latest Videos" |
@@ -126,7 +127,7 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 Two more things worth knowing:
 
 - **Signup email never arrives.** Check spam first. Disposable/throwaway email domains are rejected outright with a clear error — use a real address.
-- **No per-line timestamps.** `GET /transcript` returns the full spoken text as one string, not a timestamped segment list. If you need timestamps, that's a real product limitation right now, not a bug — don't expect your agent to fabricate them.
+- **Timestamps are opt-in.** `GET /transcript` returns the full spoken text as one string. Add `timestamps=true` to also get `data.segments` (`start`, `duration`, `text` per caption line, in seconds). Same credit cost, larger response, so your agent only asks for it when you want timestamps, quotes or chapters.
 
 ---
 
