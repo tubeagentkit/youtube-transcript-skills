@@ -87,7 +87,8 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 
 | Endpoint | Cost | What it does |
 |---|---|---|
-| `GET /transcript` | 1 credit | Full transcript + title/author/thumbnail for one video; add `timestamps=true` for per-line `segments` |
+| `GET /transcript` | 1 credit | Full transcript + title/author/thumbnail for one video, with `caption_type` (manual/auto) and the language actually returned; add `timestamps=true` for per-line `segments` |
+| `POST /batch` + `GET /batch` | 1 credit per successful video | Up to 100 videos in one call; poll for results (failed videos are never charged) |
 | `GET /search` | 1 credit/page | Search YouTube for videos or channels, paginated |
 | `GET /resolve` | Free | Resolve a channel handle/URL/ID to its canonical channel ID |
 | `GET /channel/latest` | Free | Channel metadata + its home tab's "Latest Videos" |

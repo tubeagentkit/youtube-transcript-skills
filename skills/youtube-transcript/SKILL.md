@@ -141,15 +141,28 @@ Successful response:
   "data": {
     "video_id": "jNQXAC9IVRw",
     "language_code": "en",
+    "requested_language": "en",
+    "caption_type": "manual",
     "title": "Me at the zoo",
     "author_name": "jawed",
     "author_url": "https://www.youtube.com/channel/UC4Qob...",
     "thumbnail_url": "https://...",
     "transcript": "All right, so here we are...",
-    "word_count": 39
+    "word_count": 39,
+    "cached": true,
+    "fetched_at": "2026-09-20T03:10:58.938Z"
   }
 }
 ```
+
+- `language_code` is the caption track actually returned. If it differs from
+  `requested_language`, the video didn't have that language: say so rather
+  than presenting it as a translation.
+- `caption_type` is `manual` (uploaded by the creator) or `auto` (YouTube's
+  speech recognition), or `null` if unknown. With `auto`, names and technical
+  terms may be misheard, so be careful quoting them verbatim.
+- `cached` / `fetched_at` tell you whether this came from the stored copy and
+  when it was fetched from YouTube.
 
 `transcript` is the full spoken text as one plain string. With
 `timestamps=true` the response also includes `segments`, one object per
@@ -209,6 +222,19 @@ Fully paginated: provide either `list` (first page) or `continuation` (from a
 previous response's `data.continuation_token` - opaque, pass it back
 verbatim, `null` means no more pages). The bundled `scripts/fetch_playlist.sh`
 wraps this call.
+
+**Transcripts for many videos at once** - `POST /batch` with JSON
+`{"videos": [<up to 100 IDs or URLs>], "language": "en", "timestamps": false}`
+(free to submit; 1 credit per video that returns a transcript, failures are
+never charged). It returns a `batch_id` immediately; poll
+`GET /batch?id=<batch_id>&offset=0&limit=20` every few seconds until
+`data.status` is `completed`, then read `data.items` (same fields as a single
+transcript, or an `error_code` per failed video) and page with `next_offset`.
+Prefer this over looping `GET /transcript` when the user wants a whole
+playlist or channel: list the video IDs with the playlist/channel endpoints,
+then submit them in batches of 100. The bundled `scripts/submit_batch.sh`
+(`[--language xx] [--timestamps] <video> [video...]`) and
+`scripts/fetch_batch.sh` (`<batch_id> [offset] [limit]`) wrap these calls.
 
 **Check remaining credit balance** - `GET /credits` (free, 0 credits). Returns
 `plan_credits_left`, `topup_credits_left`, the active `plan`
