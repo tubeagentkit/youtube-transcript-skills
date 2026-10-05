@@ -122,9 +122,9 @@ curl -s "https://getyoutubetranscript.com/api/v1/transcript?v=<VIDEO_ID_OR_URL>&
 - `language` is optional and defaults to `en` only when the user hasn't said
   otherwise - the example above uses `en` for illustration, not because
   English should be forced. If the user asks for a specific language, pass
-  that instead of the default. Use the response's own error if a requested
-  language isn't available (see Errors below) rather than guessing which
-  languages exist.
+  that instead of the default. Don't guess which languages exist: check with
+  the free `GET /transcript/languages` (below) when it matters, or use the
+  response's own error if a requested language isn't available.
 - `timestamps=true` is optional: add it when the user wants timestamps, wants
   to find or quote where something is said, or wants chapters or a timeline.
   The response then also has `segments` (see below). Leave it off otherwise;
@@ -222,6 +222,14 @@ Fully paginated: provide either `list` (first page) or `continuation` (from a
 previous response's `data.continuation_token` - opaque, pass it back
 verbatim, `null` means no more pages). The bundled `scripts/fetch_playlist.sh`
 wraps this call.
+
+**Caption languages a video offers** - `GET /transcript/languages?v=<video>`
+(free, 0 credits). Returns `data.languages` (each with `language_code`,
+`name`, and `caption_type` `manual` or `auto`) and `data.default_language_code`,
+the language a plain transcript request returns. An empty list means the
+video has captions turned off. Use it before a transcript request when the
+user wants a specific language or asks what languages exist. The bundled
+`scripts/fetch_languages.sh <video>` wraps this call.
 
 **Transcripts for many videos at once** - `POST /batch` with JSON
 `{"videos": [<up to 100 IDs or URLs>], "language": "en", "timestamps": false}`
