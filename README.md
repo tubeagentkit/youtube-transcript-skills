@@ -10,7 +10,7 @@ An [Agent Skill](https://skills.sh) that teaches Claude, Cursor, Antigravity, Wi
 
 Works with Claude Code, Cursor, Antigravity, Windsurf, Cline, Codex, and 70+ other agent runtimes via [skills.sh](https://skills.sh), and via [ClawHub](https://clawhub.ai) for OpenClaw/ClawdBot/Moltbot.
 
-**Free tier · No credit card · 100 credits on signup · Your agent can set the whole thing up for you**
+**Metered API: 1 credit per successful request · 100 free credits on signup, no card · then from $5/month for 1,000 credits**
 
 ---
 
@@ -65,19 +65,12 @@ Just install and ask. No config, no code — talk to your agent in plain English
 
 ---
 
-## Getting an API Key — No Browser Required
+## Getting an API Key
 
-Most agent-skill integrations make you open a browser, sign up, copy a key, and paste it back. This one doesn't have to.
+1. Sign up at [getyoutubetranscript.com/dashboard](https://getyoutubetranscript.com/dashboard) and copy your API key. New accounts get 100 free credits, no card.
+2. Paste the key to your agent when it asks. It checks the key and saves it to `~/.config/getyoutubetranscript/api_key` (readable only by you), which every bundled script reads.
 
-Ask your agent for a transcript with no key configured, and it will:
-
-1. Ask for the email you'd like to use — and tell you exactly what it's for before sending anything.
-2. Send it to `getyoutubetranscript.com` to create a free account and email you a 6-digit verification code.
-3. Once you give it the code, it gets back a real API key and starts using it — all without you leaving the conversation.
-
-The key is shown once; your agent will ask before saving it anywhere persistent (like a shell profile). See [`skills/youtube-transcript/SKILL.md`](skills/youtube-transcript/SKILL.md) for the exact flow it follows, including the two API calls involved (`POST /api/v1/signup`, `POST /api/v1/signup/verify`).
-
-Already have an account? Grab your key from the [dashboard](https://getyoutubetranscript.com/dashboard) instead — no card required either way.
+That's the only file the skill writes. It doesn't touch your shell profile unless you ask it to and say yes to the exact line it will add (`scripts/save_key.sh --profile`). The agent never creates an account for you. See [`skills/youtube-transcript/SKILL.md`](skills/youtube-transcript/SKILL.md) for the exact steps.
 
 ---
 
