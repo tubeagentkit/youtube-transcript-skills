@@ -10,6 +10,6 @@ if [ -z "${YOUTUBE_TRANSCRIPT_API_KEY:-}" ] && [ -r "$KEY_FILE" ]; then
 fi
 
 if [ -z "${YOUTUBE_TRANSCRIPT_API_KEY:-}" ]; then
-    echo "Error: no API key yet. The user creates one at https://getyoutubetranscript.com/dashboard; save it with: printf '%s' \"<key>\" | scripts/save_key.sh (see SKILL.md, 'API key setup')." >&2
+    echo "Error: no API key yet. Run scripts/request_code.sh <email>, then scripts/save_key.sh <email> <code> (see SKILL.md, 'API key setup')." >&2
     exit 1
 fi

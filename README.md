@@ -10,7 +10,7 @@ An [Agent Skill](https://skills.sh) that teaches Claude, Cursor, Antigravity, Wi
 
 Works with Claude Code, Cursor, Antigravity, Windsurf, Cline, Codex, and 70+ other agent runtimes via [skills.sh](https://skills.sh), and via [ClawHub](https://clawhub.ai) for OpenClaw/ClawdBot/Moltbot.
 
-**Metered API: 1 credit per successful request · 100 free credits on signup, no card · then from $5/month for 1,000 credits**
+**Metered API: 1 credit per successful request · 100 free credits on signup, no card · then from $5/month for 1,000 credits · Your agent can set it up for you**
 
 ---
 
@@ -65,12 +65,17 @@ Just install and ask. No config, no code — talk to your agent in plain English
 
 ---
 
-## Getting an API Key
+## Getting an API Key: No Browser Required
 
-1. Sign up at [getyoutubetranscript.com/dashboard](https://getyoutubetranscript.com/dashboard) and copy your API key. New accounts get 100 free credits, no card.
-2. Paste the key to your agent when it asks. It checks the key and saves it to `~/.config/getyoutubetranscript/api_key` (readable only by you), which every bundled script reads.
+Ask your agent for a transcript with no key configured, and it will:
 
-That's the only file the skill writes. It doesn't touch your shell profile unless you ask it to and say yes to the exact line it will add (`scripts/save_key.sh --profile`). The agent never creates an account for you. See [`skills/youtube-transcript/SKILL.md`](skills/youtube-transcript/SKILL.md) for the exact steps.
+1. Tell you the cost (1 credit per successful request; 100 free credits for new accounts, then from $5/month for 1,000) and ask for the email you'd like to use.
+2. Send that email to `getyoutubetranscript.com`, which creates the account (or signs you in) and emails you a 6-digit code.
+3. Once you give it the code, it gets an API key, checks it, and saves it to `~/.config/getyoutubetranscript/api_key` (readable only by you). The key is never printed in the chat.
+
+Can't get the code (no access to that inbox, or it never arrives)? Sign up at [getyoutubetranscript.com/dashboard](https://getyoutubetranscript.com/dashboard) and paste the key to your agent instead.
+
+The key file is the only thing the skill writes. It only touches your shell profile if you ask it to and say yes to the exact line it will add (`scripts/save_key.sh --profile`). See [`skills/youtube-transcript/SKILL.md`](skills/youtube-transcript/SKILL.md) for the exact flow, including the two API calls involved (`POST /api/v1/signup`, `POST /api/v1/signup/verify`).
 
 ---
 

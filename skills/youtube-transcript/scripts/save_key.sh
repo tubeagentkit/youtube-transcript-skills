@@ -1,8 +1,12 @@
 #!/bin/bash
-# Saves an API key that the user created at https://getyoutubetranscript.com/dashboard
-# and pasted into the conversation. The key is read from standard input, so it
-# is not passed as a command-line argument, and it is never printed. It is
-# checked against the free /credits endpoint first, then written to
+# Step 2 of API key setup: gets the API key and saves it without ever printing
+# it. Two ways in:
+#   - with <email> <code>: exchanges the 6-digit code that request_code.sh had
+#     emailed for an API key (creates the account if it is new);
+#   - with no email/code: reads a key the user created at
+#     https://getyoutubetranscript.com/dashboard and pasted, from standard input
+#     (so it is not a command-line argument).
+# The key is checked against the free /credits endpoint, then written to
 # ~/.config/getyoutubetranscript/api_key (mode 600), which every script in
 # scripts/ reads.
 #
@@ -12,26 +16,49 @@
 # That line reads the key file; the key itself is not copied into the profile.
 #
 # Usage:
+#   ./save_key.sh <email> <6-digit-code> [--profile]
 #   printf '%s' "<api key>" | ./save_key.sh [--profile]
+#   ./save_key.sh --profile     (adds the profile line for the key already saved)
 set -euo pipefail
 
 UPDATE_PROFILE=0
-[ "${1:-}" = "--profile" ] && UPDATE_PROFILE=1
+ARGS=()
+for arg in "$@"; do
+    if [ "$arg" = "--profile" ]; then UPDATE_PROFILE=1; else ARGS+=("$arg"); fi
+done
 
 API_BASE="${YOUTUBE_TRANSCRIPT_API_BASE:-https://getyoutubetranscript.com/api/v1}"
 KEY_FILE="${YOUTUBE_TRANSCRIPT_KEY_FILE:-$HOME/.config/getyoutubetranscript/api_key}"
+USER_AGENT="User-Agent: youtube-transcript-skill/1.2"
 
-KEY="$(tr -d '[:space:]')"
-case "$KEY" in
-    sk_live_*) ;;
-    *)
-        echo "Error: expected an API key starting with sk_live_ on standard input." >&2
+if [ "${#ARGS[@]}" -ge 2 ]; then
+    RESPONSE="$(curl -s -X POST "${API_BASE}/signup/verify" \
+        -H "Content-Type: application/json" -H "$USER_AGENT" \
+        --data "$(printf '{"email": "%s", "otp": "%s"}' "${ARGS[0]}" "${ARGS[1]}")")"
+    KEY="$(printf '%s' "$RESPONSE" | sed -n 's/.*"api_key" *: *"\(sk_live_[A-Za-z0-9_-]*\)".*/\1/p')"
+    if [ -z "$KEY" ]; then
+        # No key in the response, so it is safe to show: it is the server's error.
+        echo "Error: could not verify the code. Server response: ${RESPONSE}" >&2
         exit 1
-        ;;
-esac
+    fi
+else
+    KEY=""
+    [ -t 0 ] || KEY="$(tr -d '[:space:]')"
+    if [ -z "$KEY" ] && [ "$UPDATE_PROFILE" = 1 ] && [ -r "$KEY_FILE" ]; then
+        # --profile on its own: add the profile line for the key that is already saved.
+        KEY="$(tr -d '[:space:]' < "$KEY_FILE")"
+    fi
+    case "$KEY" in
+        sk_live_*) ;;
+        *)
+            echo "Error: expected <email> <code>, or an API key starting with sk_live_ on standard input." >&2
+            exit 1
+            ;;
+    esac
+fi
 
 # Check the key before saving it (the credits call is free and prints the balance, not the key).
-BALANCE="$(curl -s "${API_BASE}/credits" -H "Authorization: Bearer ${KEY}" -H "User-Agent: youtube-transcript-skill/1.2")"
+BALANCE="$(curl -s "${API_BASE}/credits" -H "Authorization: Bearer ${KEY}" -H "$USER_AGENT")"
 case "$BALANCE" in
     *'"success":true'*) ;;
     *)
