@@ -55,12 +55,13 @@ it never appears in your output or the chat.
    > "To fetch YouTube transcripts I need a getyoutubetranscript.com API key.
    > The API is metered: 1 credit per successful request. New accounts get
    > 100 free credits, then plans start at $5/month for 1,000 credits. If you
-   > already have a key, paste it. Otherwise give me your email: I'll create
-   > the account (or sign you in if you have one), you'll get a 6-digit code
-   > by email, and I'll save the key on this machine so it keeps working in
-   > future sessions."
+   > already have a key, paste it. Otherwise give me your email (and, if you
+   > like, the name to put on the account): I'll create the account (or sign
+   > you in if you have one), you'll get a 6-digit code by email, and I'll
+   > save the key on this machine so it keeps working in future sessions."
 
-   Use only an email the user gives in reply to this question.
+   Use only an email the user gives in reply to this question. The name is
+   optional: use it only if they offer one, never ask again or guess it.
 
 2. **If they give an email**, send the code:
 
@@ -77,6 +78,8 @@ it never appears in your output or the chat.
 
    ```bash
    scripts/save_key.sh "the_user_email" "123456"
+   # or, if the user gave a name:
+   scripts/save_key.sh "the_user_email" "123456" --name "Their Name"
    ```
 
    It verifies the code, checks the key, writes it to

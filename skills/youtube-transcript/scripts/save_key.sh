@@ -15,17 +15,32 @@
 #   [ -r "<key file>" ] && export YOUTUBE_TRANSCRIPT_API_KEY="$(cat "<key file>")"  # getyoutubetranscript.com
 # That line reads the key file; the key itself is not copied into the profile.
 #
+# --name "<name>" (optional, only if the user offered one) is stored as the
+# account's display name when the account has none yet.
+#
 # Usage:
-#   ./save_key.sh <email> <6-digit-code> [--profile]
+#   ./save_key.sh <email> <6-digit-code> [--name "<name>"] [--profile]
 #   printf '%s' "<api key>" | ./save_key.sh [--profile]
 #   ./save_key.sh --profile     (adds the profile line for the key already saved)
 set -euo pipefail
 
 UPDATE_PROFILE=0
+NAME=""
 ARGS=()
-for arg in "$@"; do
-    if [ "$arg" = "--profile" ]; then UPDATE_PROFILE=1; else ARGS+=("$arg"); fi
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --profile) UPDATE_PROFILE=1 ;;
+        --name) NAME="${2:-}"; shift ;;
+        --name=*) NAME="${1#--name=}" ;;
+        *) ARGS+=("$1") ;;
+    esac
+    shift
 done
+
+# JSON string escaping for values we didn't choose (the email and the optional name).
+json_escape() {
+    printf '%s' "$1" | tr '\000-\037' ' ' | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'
+}
 
 API_BASE="${YOUTUBE_TRANSCRIPT_API_BASE:-https://getyoutubetranscript.com/api/v1}"
 KEY_FILE="${YOUTUBE_TRANSCRIPT_KEY_FILE:-$HOME/.config/getyoutubetranscript/api_key}"
@@ -34,7 +49,7 @@ USER_AGENT="User-Agent: youtube-transcript-skill/1.2"
 if [ "${#ARGS[@]}" -ge 2 ]; then
     RESPONSE="$(curl -s -X POST "${API_BASE}/signup/verify" \
         -H "Content-Type: application/json" -H "$USER_AGENT" \
-        --data "$(printf '{"email": "%s", "otp": "%s"}' "${ARGS[0]}" "${ARGS[1]}")")"
+        --data "$(printf '{"email": "%s", "otp": "%s", "name": "%s"}' "$(json_escape "${ARGS[0]}")" "$(json_escape "${ARGS[1]}")" "$(json_escape "$NAME")")")"
     KEY="$(printf '%s' "$RESPONSE" | sed -n 's/.*"api_key" *: *"\(sk_live_[A-Za-z0-9_-]*\)".*/\1/p')"
     if [ -z "$KEY" ]; then
         # No key in the response, so it is safe to show: it is the server's error.
