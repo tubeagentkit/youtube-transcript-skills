@@ -1,5 +1,5 @@
 #!/bin/bash
-# Lists the caption languages a video offers (GET /transcript/languages). Free.
+# Lists the caption languages a video offers (GET /transcript/languages). 1 credit per successful call.
 #
 # Usage:
 #   ./fetch_languages.sh <video_id_or_url>

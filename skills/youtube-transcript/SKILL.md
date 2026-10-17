@@ -155,7 +155,7 @@ curl -s "https://getyoutubetranscript.com/api/v1/transcript?v=<VIDEO_ID_OR_URL>&
   otherwise - the example above uses `en` for illustration, not because
   English should be forced. If the user asks for a specific language, pass
   that instead of the default. Don't guess which languages exist: check with
-  the free `GET /transcript/languages` (below) when it matters, or use the
+  `GET /transcript/languages` (below, 1 credit) when it matters, or use the
   response's own error if a requested language isn't available.
 - `timestamps=true` is optional: add it when the user wants timestamps, wants
   to find or quote where something is said, or wants chapters or a timeline.
@@ -256,7 +256,9 @@ verbatim, `null` means no more pages). The bundled `scripts/fetch_playlist.sh`
 wraps this call.
 
 **Caption languages a video offers** - `GET /transcript/languages?v=<video>`
-(free, 0 credits). Returns `data.languages` (each with `language_code`,
+(1 credit per successful call, so only call it when the user wants a specific
+language or asks what exists, and reuse the answer instead of asking again).
+Returns `data.languages` (each with `language_code`,
 `name`, and `caption_type` `manual` or `auto`) and `data.default_language_code`,
 the language a plain transcript request returns. An empty list means the
 video has captions turned off. Use it before a transcript request when the
