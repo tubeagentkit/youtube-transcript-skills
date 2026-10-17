@@ -1,5 +1,5 @@
 #!/bin/bash
-# Fetches full channel metadata plus the channel's home-tab "Latest Videos"
+# Fetches the channel's details plus its 15 newest uploads
 # via the getyoutubetranscript.com API. 1 credit per successful call. For the complete,
 # paginated upload history use fetch_channel_videos.sh instead.
 #

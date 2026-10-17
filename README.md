@@ -90,7 +90,7 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 | `POST /batch` + `GET /batch` | 1 credit per successful video | Up to 100 videos in one call; poll for results (failed videos are never charged) |
 | `GET /search` | 1 credit/page | Search YouTube for videos or channels, paginated |
 | `GET /resolve` | 1 credit | Resolve a channel handle/URL/ID to its canonical channel ID |
-| `GET /channel/latest` | 1 credit | Channel metadata + its home tab's "Latest Videos" |
+| `GET /channel/latest` | 1 credit | Channel details + its 15 newest uploads |
 | `GET /channel/videos` | 1 credit/page | Every video a channel has ever uploaded, fully paginated |
 | `GET /channel/search` | 1 credit/page | Search within one channel's videos, fully paginated |
 | `GET /playlist` | 1 credit/page | Every video in a playlist, fully paginated |
