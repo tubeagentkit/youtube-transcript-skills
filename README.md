@@ -89,8 +89,8 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 | `GET /transcript/languages` | 1 credit | The caption languages a video offers (manual or auto-generated) and which one a default request returns |
 | `POST /batch` + `GET /batch` | 1 credit per successful video | Up to 100 videos in one call; poll for results (failed videos are never charged) |
 | `GET /search` | 1 credit/page | Search YouTube for videos or channels, paginated |
-| `GET /resolve` | Free | Resolve a channel handle/URL/ID to its canonical channel ID |
-| `GET /channel/latest` | Free | Channel metadata + its home tab's "Latest Videos" |
+| `GET /resolve` | 1 credit | Resolve a channel handle/URL/ID to its canonical channel ID |
+| `GET /channel/latest` | 1 credit | Channel metadata + its home tab's "Latest Videos" |
 | `GET /channel/videos` | 1 credit/page | Every video a channel has ever uploaded, fully paginated |
 | `GET /channel/search` | 1 credit/page | Search within one channel's videos, fully paginated |
 | `GET /playlist` | 1 credit/page | Every video in a playlist, fully paginated |
@@ -107,7 +107,7 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 | **Annual** | $4.50/mo ($54/yr) | 1,000 credits/month | 300 req/min |
 
 - **1 credit = 1 successful request.** Failed calls are never charged.
-- `resolve` and `channel/latest` are always free, regardless of plan.
+- Only `GET /credits` is free; every other endpoint costs 1 credit per successful call, whatever the plan.
 - Top-ups: $2.50 per 1,000 credits (Monthly), $1.50 per 1,000 (Annual, 40% cheaper).
 - [View pricing / manage billing →](https://getyoutubetranscript.com/dashboard)
 
@@ -137,7 +137,7 @@ Two more things worth knowing:
 No. This replaces the need for a Google Cloud project, API key, and quota management entirely — signup here is free and instant.
 
 **Which endpoint should I use for a whole channel's videos?**
-`channel/latest` if you just want recent uploads (free). `channel/videos` if you want the complete upload history, paginated.
+`channel/latest` if you just want recent uploads (1 credit). `channel/videos` if you want the complete upload history, paginated.
 
 **Can I search inside just one channel, not all of YouTube?**
 Yes — `channel/search` does exactly that, with the same pagination convention as everything else here.

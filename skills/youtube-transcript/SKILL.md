@@ -224,11 +224,12 @@ the next page (works for both types). The bundled `scripts/fetch_search.sh`
 wraps this call.
 
 **Resolve a channel handle to its channel ID** - `GET /resolve?handle=@mkbhd`
-(free, 0 credits). Accepts a channel ID, a channel URL, or a bare `@handle`.
-The bundled `scripts/resolve_channel.sh` wraps this call.
+(1 credit per successful call). Accepts a channel ID, a channel URL, or a bare
+`@handle`. Handles don't change channel, so reuse an answer you already have
+instead of asking again. The bundled `scripts/resolve_channel.sh` wraps this call.
 
 **Channel info + latest videos** - `GET /channel/latest?channel=@mkbhd`
-(free, 0 credits). Full channel metadata (subscribers, description, avatar)
+(1 credit per successful call). Full channel metadata (subscribers, description, avatar)
 plus whatever "Latest Videos" the channel's home tab is currently showing -
 not the complete upload history. For that, use channel/videos below. The
 bundled `scripts/fetch_channel_latest.sh` wraps this call.

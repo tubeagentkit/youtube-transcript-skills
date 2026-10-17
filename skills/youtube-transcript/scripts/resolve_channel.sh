@@ -1,6 +1,6 @@
 #!/bin/bash
 # Resolves a channel handle/URL/id to its channel ID via the
-# getyoutubetranscript.com API. Free - 0 credits.
+# getyoutubetranscript.com API. 1 credit per successful call.
 #
 # Usage:
 #   YOUTUBE_TRANSCRIPT_API_KEY=sk_live_... ./resolve_channel.sh <@handle_or_url_or_id>
