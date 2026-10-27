@@ -1,6 +1,6 @@
 ---
 name: youtube-transcript
-description: Calls the getyoutubetranscript.com API, which is metered - 1 credit per successful request; a new account gets 100 free credits, then plans start at $5/month for 1,000 credits. Needs an API key; the skill can create the account in the conversation from the user's email and a 6-digit code. Use when the user wants a YouTube video's transcript fetched, wants to summarize/analyze/quote a YouTube video by its spoken content, wants to search YouTube (globally or a channel handle's videos), wants a channel handle resolved to its channel ID, wants the videos in a YouTube playlist, or wants to check their remaining API credit balance.
+description: Calls the getyoutubetranscript.com API, which is metered - 1 credit per successful request; a new account gets 100 free credits, then plans start at $5/month for 1,000 credits. Needs an API key; the skill can create the account in the conversation from the user's email and a 6-digit code. Use when the user wants a YouTube video's transcript fetched, wants to summarize/analyze/quote a YouTube video by its spoken content, wants to search YouTube (globally or a channel handle's videos), wants a channel handle resolved to its channel ID, wants the videos in a YouTube playlist, wants a channel's Shorts, live streams, playlists or community posts, wants the videos YouTube suggests next to a video, wants a video's estimated likes and dislikes, wants a channel's banner, or wants to check their remaining API credit balance.
 source: https://github.com/tubeagentkit/youtube-transcript-skills
 ---
 
@@ -240,9 +240,39 @@ bundled `scripts/fetch_channel_latest.sh` wraps this call.
 scrape, not a free re-read). The response's `data.continuation_token`, when
 non-null, is an opaque string - pass it back verbatim as `continuation` to
 get the next page; never construct or decode it yourself. `null` means
-there are no more pages. The bundled `scripts/fetch_channel_videos.sh` wraps
-this call (pass `""` as the first argument when using a continuation token -
-see the script's own usage comment).
+there are no more pages. Add `tab=shorts` or `tab=streams` (the Live tab) for
+those lists instead of the uploads, and `sort=popular` or `sort=oldest` for
+the most-viewed or earliest first (default `latest`); both apply to the first
+page only, a continuation already carries them. The bundled
+`scripts/fetch_channel_videos.sh` wraps this call (pass `""` as the first
+argument when using a continuation token - see the script's own usage comment).
+
+**A channel's playlists and community posts** - `GET
+/channel/playlists?channel=@mkbhd` and `GET /channel/posts?channel=@mkbhd`
+(1 credit/page each). Same `channel` / `continuation` convention as
+channel/videos. Playlists come back with `id`, `title`, `link` and
+`video_count`; pass a playlist's `id` to `/playlist` to list its videos. Posts
+come back with `text`, `links`, `likes`, `comments`, `published_time` and any
+attached image. The bundled `scripts/fetch_channel_playlists.sh` and
+`scripts/fetch_channel_posts.sh` wrap these calls.
+
+**Videos related to a video** - `GET /video/related?v=<video>` (1 credit per
+successful call). The videos YouTube suggests next to it, each with `id`,
+`title`, `link`, `channel`, `views`, `published_time` and `length`. Treat them
+as suggestions, not a ranking of similar content. The bundled
+`scripts/fetch_related.sh <video>` wraps this call.
+
+**Estimated likes and dislikes** - `GET /video/dislikes?v=<video>` (1 credit per
+successful call). YouTube no longer publishes dislikes, so `data.likes`,
+`data.dislikes`, `data.rating` and `data.view_count` are estimates from Return
+YouTube Dislike (`data.estimated` is always `true`): say so when you report
+them. The bundled `scripts/fetch_dislikes.sh <video>` wraps this call.
+
+**A channel's banner and avatar** - `GET /channel/banner?channel=@mkbhd` (1
+credit per successful call). `data.banner` holds the uncropped `original`, the
+`largest` crop and every crop in `sizes`; `data.has_banner` is `false` for a
+channel with no banner. The bundled `scripts/fetch_channel_banner.sh <channel>`
+wraps this call.
 
 **Search within a channel** - `GET
 /channel/search?channel=@mkbhd&q=iphone` (1 credit/page). Same `channel` +

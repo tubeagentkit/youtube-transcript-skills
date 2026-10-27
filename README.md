@@ -6,7 +6,7 @@
 
 > Get YouTube transcripts, search videos, browse channels, and pull playlists — from any AI agent, with no dashboard visit required to get started.
 
-An [Agent Skill](https://skills.sh) that teaches Claude, Cursor, Antigravity, Windsurf, and any other Agent Skills-compatible tool how to fetch YouTube transcripts, search YouTube (videos or channels), resolve channel handles, browse a channel's full upload history, search inside a channel, and pull playlist contents — all through the [getyoutubetranscript.com](https://getyoutubetranscript.com) public API.
+An [Agent Skill](https://skills.sh) that teaches Claude, Cursor, Antigravity, Windsurf, and any other Agent Skills-compatible tool how to fetch YouTube transcripts, search YouTube (videos or channels), resolve channel handles, browse a channel's uploads, Shorts, live streams, playlists and posts, search inside a channel, fetch a channel's banner, pull playlist contents, find related videos, and read a video's estimated likes and dislikes — all through the [getyoutubetranscript.com](https://getyoutubetranscript.com) public API.
 
 Works with Claude Code, Cursor, Antigravity, Windsurf, Cline, Codex, and 70+ other agent runtimes via [skills.sh](https://skills.sh), and via [ClawHub](https://clawhub.ai) for OpenClaw/ClawdBot/Moltbot.
 
@@ -58,6 +58,11 @@ Just install and ask. No config, no code — talk to your agent in plain English
 | **Find a channel** | "Search YouTube for MKBHD's channel" |
 | **Browse a channel** | "What has @veritasium posted recently?" |
 | **Get a channel's full upload history** | "List every video @TED has ever uploaded" |
+| **Get a channel's Shorts or live streams** | "Show @mkbhd's most popular Shorts" |
+| **Get a channel's playlists or posts** | "What playlists does @veritasium have?" |
+| **Get a channel's banner** | "Download the banner of @mkbhd" |
+| **Find related videos** | "What else should I watch after this video? [URL]" |
+| **Get estimated dislikes** | "How many dislikes does this video have? [URL]" |
 | **Search inside a channel** | "Search MKBHD's channel for iPhone reviews" |
 | **Get playlist contents** | "List all videos in this playlist: [URL]" |
 | **Research a topic** | "Find and summarize the top 5 videos about quantum computing" |
