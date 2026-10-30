@@ -175,6 +175,8 @@ Other ways to use the [GetYouTubeTranscript API](https://getyoutubetranscript.co
 - [youtube-transcript-cursor-plugin](https://github.com/tubeagentkit/youtube-transcript-cursor-plugin): YouTube Transcript Cursor plugin bundling the MCP server, skills, commands and a research agent
 - [n8n-nodes-getyoutubetranscript](https://github.com/tubeagentkit/n8n-nodes-getyoutubetranscript): YouTube transcript n8n community node, also usable as an AI Agent tool
 
+Comparing options, including other tools: [awesome-youtube-transcripts](https://github.com/tubeagentkit/awesome-youtube-transcripts) lists libraries, hosted APIs, MCP servers and speech-to-text tools for YouTube transcripts.
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).
