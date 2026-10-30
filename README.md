@@ -2,11 +2,11 @@
 
 [![skills.sh](https://skills.sh/b/tubeagentkit/youtube-transcript-skills)](https://skills.sh/tubeagentkit/youtube-transcript-skills)
 [![License](https://img.shields.io/badge/License-MIT-4CAF50?style=for-the-badge)](./LICENSE)
-[![Website](https://img.shields.io/badge/Website-getyoutubetranscript.com-FF3B00?style=for-the-badge)](https://getyoutubetranscript.com)
+[![Website](https://img.shields.io/badge/Website-getyoutubetranscript.com-FF3B00?style=for-the-badge)](https://getyoutubetranscript.com/?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills)
 
 > Get YouTube transcripts, search videos, browse channels, and pull playlists — from any AI agent, with no dashboard visit required to get started.
 
-An [Agent Skill](https://skills.sh) that teaches Claude, Cursor, Antigravity, Windsurf, and any other Agent Skills-compatible tool how to fetch YouTube transcripts, search YouTube (videos or channels), resolve channel handles, browse a channel's uploads, Shorts, live streams, playlists and posts, search inside a channel, fetch a channel's banner, pull playlist contents, find related videos, and read a video's estimated likes and dislikes — all through the [getyoutubetranscript.com](https://getyoutubetranscript.com) public API.
+An [Agent Skill](https://skills.sh) that teaches Claude, Cursor, Antigravity, Windsurf, and any other Agent Skills-compatible tool how to fetch YouTube transcripts, search YouTube (videos or channels), resolve channel handles, browse a channel's uploads, Shorts, live streams, playlists and posts, search inside a channel, fetch a channel's banner, pull playlist contents, find related videos, and read a video's estimated likes and dislikes — all through the [getyoutubetranscript.com](https://getyoutubetranscript.com/?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills) public API.
 
 Works with Claude Code, Cursor, Antigravity, Windsurf, Cline, Codex, and 70+ other agent runtimes via [skills.sh](https://skills.sh), and via [ClawHub](https://clawhub.ai) for OpenClaw/ClawdBot/Moltbot.
 
@@ -78,7 +78,7 @@ Ask your agent for a transcript with no key configured, and it will:
 2. Send that email to `getyoutubetranscript.com`, which creates the account (or signs you in) and emails you a 6-digit code.
 3. Once you give it the code, it gets an API key, checks it, and saves it to `~/.config/getyoutubetranscript/api_key` (readable only by you). The key is never printed in the chat.
 
-Can't get the code (no access to that inbox, or it never arrives)? Sign up at [getyoutubetranscript.com/dashboard](https://getyoutubetranscript.com/dashboard) and paste the key to your agent instead.
+Can't get the code (no access to that inbox, or it never arrives)? Sign up at [getyoutubetranscript.com/dashboard](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills) and paste the key to your agent instead.
 
 The key file is the only thing the skill writes. It only touches your shell profile if you ask it to and say yes to the exact line it will add (`scripts/save_key.sh --profile`). See [`skills/youtube-transcript/SKILL.md`](skills/youtube-transcript/SKILL.md) for the exact flow, including the two API calls involved (`POST /api/v1/signup`, `POST /api/v1/signup/verify`).
 
@@ -114,7 +114,7 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 - **1 credit = 1 successful request.** Failed calls are never charged.
 - Only `GET /credits` is free; every other endpoint costs 1 credit per successful call, whatever the plan.
 - Top-ups: $2.50 per 1,000 credits (Monthly), $1.50 per 1,000 (Annual, 40% cheaper).
-- [View pricing / manage billing →](https://getyoutubetranscript.com/dashboard)
+- [View pricing / manage billing →](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills)
 
 ---
 
@@ -123,7 +123,7 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `401 MISSING_API_KEY` / `INVALID_API_KEY` | No key sent, or it's wrong/revoked | Confirm `YOUTUBE_TRANSCRIPT_API_KEY` is actually set in your agent's environment, and that it starts with `sk_live_` |
-| `402 PAYMENT_REQUIRED` | Out of credits | Top up or upgrade at the [dashboard](https://getyoutubetranscript.com/dashboard) — don't retry the same call |
+| `402 PAYMENT_REQUIRED` | Out of credits | Top up or upgrade at the [dashboard](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills) — don't retry the same call |
 | `404 VIDEO_UNAVAILABLE` / `TRANSCRIPT_NOT_FOUND` / `TRANSCRIPT_DISABLED` | Video doesn't exist, is private, or has no captions | Confirm the video plays and shows captions in a real browser first |
 | `404 LANGUAGE_NOT_AVAILABLE` | The video doesn't have a transcript in the language you asked for | Omit `language` to get whatever's available, or try a different one |
 | `429 RATE_LIMITED` | Too many requests for your plan tier | Back off — don't hammer it in a retry loop |
@@ -154,7 +154,7 @@ Yes — see [tubeagentkit/youtube-mcp](https://github.com/tubeagentkit/youtube-m
 
 ## Also available as a REST API
 
-Building an app instead of an agent skill? The exact same backend is a plain JSON REST API — see [`SKILL.md`](skills/youtube-transcript/SKILL.md) for the full endpoint reference, or the [dashboard](https://getyoutubetranscript.com/dashboard) to get a key directly.
+Building an app instead of an agent skill? The exact same backend is a plain JSON REST API — see [`SKILL.md`](skills/youtube-transcript/SKILL.md) for the full endpoint reference, or the [dashboard](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills) to get a key directly.
 
 ## Disclosure
 
@@ -166,7 +166,7 @@ Issues and PRs welcome.
 
 ## Related projects
 
-Other ways to use the [GetYouTubeTranscript API](https://getyoutubetranscript.com):
+Other ways to use the [GetYouTubeTranscript API](https://getyoutubetranscript.com/?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills):
 
 - [youtube-transcript-api](https://github.com/tubeagentkit/youtube-transcript-api): YouTube Transcript API docs, endpoint reference, OpenAPI spec and examples in curl, Python, JavaScript, Go and PHP
 - [youtube-transcript-api-python](https://github.com/tubeagentkit/youtube-transcript-api-python): YouTube Transcript API SDK for Python
