@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Sourced by the paged channel scripts (after lib/key.sh). One page of a channel list.
 #
 #   fetch_channel_page <videos|playlists|posts> <channel> <continuation> [name=value ...]
