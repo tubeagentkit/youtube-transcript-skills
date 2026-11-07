@@ -26,6 +26,8 @@ npx skills add tubeagentkit/youtube-transcript-skills --skill youtube-transcript
 npx clawhub@latest install tubeagentkit/youtube-transcript
 ```
 
+**Agensi marketplace:** also listed at [agensi.io](https://www.agensi.io/skills/youtube-transcript-transcripts-search-channel-data) (free).
+
 **Manual (git clone):**
 
 ```bash
