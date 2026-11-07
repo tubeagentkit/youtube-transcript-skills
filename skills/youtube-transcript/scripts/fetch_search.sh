@@ -13,18 +13,18 @@ set -euo pipefail
 
 QUERY="${1:-}"
 TYPE="${2:-video}"
-PAGE_TOKEN="${3:-}"
+PAGE_CURSOR="${3:-}"
 
-if [ -z "$QUERY" ] && [ -z "$PAGE_TOKEN" ]; then
+if [ -z "$QUERY" ] && [ -z "$PAGE_CURSOR" ]; then
     echo "Usage: fetch_search.sh <query> [video|channel] | fetch_search.sh '' '' <page_token>" >&2
     exit 1
 fi
 
 source "$(dirname "$0")/lib/key.sh"
 
-if [ -n "$PAGE_TOKEN" ]; then
+if [ -n "$PAGE_CURSOR" ]; then
     curl -s -G "${API_BASE}/search" \
-        --data-urlencode "page_token=${PAGE_TOKEN}" \
+        --data-urlencode "page_token=${PAGE_CURSOR}" \
         -H "Authorization: Bearer ${YOUTUBE_TRANSCRIPT_API_KEY}"
 else
     curl -s -G "${API_BASE}/search" \
