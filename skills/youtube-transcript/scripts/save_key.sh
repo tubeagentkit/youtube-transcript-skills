@@ -42,8 +42,8 @@ json_escape() {
     printf '%s' "$1" | tr '\000-\037' ' ' | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'
 }
 
-API_BASE="${YOUTUBE_TRANSCRIPT_API_BASE:-https://getyoutubetranscript.com/api/v1}"
-KEY_FILE="${YOUTUBE_TRANSCRIPT_KEY_FILE:-$HOME/.config/getyoutubetranscript/api_key}"
+API_BASE="https://getyoutubetranscript.com/api/v1"
+KEY_FILE="$HOME/.config/getyoutubetranscript/api_key"
 USER_AGENT="User-Agent: youtube-transcript-skill/1.2"
 
 if [ "${#ARGS[@]}" -ge 2 ]; then

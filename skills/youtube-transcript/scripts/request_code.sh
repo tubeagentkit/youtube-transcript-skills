@@ -8,7 +8,7 @@
 set -euo pipefail
 
 EMAIL="${1:?Usage: request_code.sh <email>}"
-API_BASE="${YOUTUBE_TRANSCRIPT_API_BASE:-https://getyoutubetranscript.com/api/v1}"
+API_BASE="https://getyoutubetranscript.com/api/v1"
 
 curl -s -X POST "${API_BASE}/signup" \
     -H "Content-Type: application/json" \
