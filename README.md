@@ -35,6 +35,16 @@ git clone https://github.com/tubeagentkit/youtube-transcript-skills.git
 cp -r youtube-transcript-skills/skills/youtube-transcript ~/.claude/skills/
 ```
 
+**OpenCode:** OpenCode loads Agent Skills from `~/.config/opencode/skills` (global) or `.opencode/skills` (per project), so copy the skill folder there:
+
+```bash
+git clone https://github.com/tubeagentkit/youtube-transcript-skills.git
+mkdir -p ~/.config/opencode/skills
+cp -r youtube-transcript-skills/skills/youtube-transcript ~/.config/opencode/skills/
+```
+
+Then ask OpenCode for a YouTube transcript; on first use the skill walks you through getting an API key. (OpenCode also reads `~/.claude/skills`, so the Claude install above works for it too.)
+
 > **Not a developer?** Paste this into Claude, Cursor, or any AI agent that supports Agent Skills:
 >
 > ```
