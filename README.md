@@ -6,7 +6,7 @@
 
 > Get YouTube transcripts, search videos, browse channels, and pull playlists — from any AI agent, with no dashboard visit required to get started.
 
-An [Agent Skill](https://skills.sh) that teaches Claude, Cursor, Antigravity, Windsurf, and any other Agent Skills-compatible tool how to fetch YouTube transcripts, search YouTube (videos or channels), resolve channel handles, browse a channel's uploads, Shorts, live streams, playlists and posts, search inside a channel, fetch a channel's banner, pull playlist contents, find related videos, and read a video's estimated likes and dislikes — all through the [getyoutubetranscript.com](https://getyoutubetranscript.com/?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills) public API.
+An [Agent Skill](https://skills.sh) that teaches Claude, Cursor, Antigravity, Windsurf, and any other Agent Skills-compatible tool how to fetch YouTube transcripts, search YouTube (videos or channels), resolve channel handles, browse a channel's uploads, Shorts, live streams, playlists and posts, search inside a channel, fetch a channel's banner, pull playlist contents, find related videos, read a video's estimated likes and dislikes, and get a video's details (views, likes, upload date, tags) and comments — all through the [getyoutubetranscript.com](https://getyoutubetranscript.com/?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills) public API.
 
 Works with Claude Code, Cursor, Antigravity, Windsurf, Cline, Codex, and 70+ other agent runtimes via [skills.sh](https://skills.sh), and via [ClawHub](https://clawhub.ai) for OpenClaw/ClawdBot/Moltbot.
 
@@ -75,6 +75,8 @@ Just install and ask. No config, no code — talk to your agent in plain English
 | **Get a channel's banner** | "Download the banner of @mkbhd" |
 | **Find related videos** | "What else should I watch after this video? [URL]" |
 | **Get estimated dislikes** | "How many dislikes does this video have? [URL]" |
+| **Get video stats** | "How many views and likes does this video have, and when was it uploaded? [URL]" |
+| **Read the comments** | "What are viewers asking in the comments of this video? [URL]" |
 | **Search inside a channel** | "Search MKBHD's channel for iPhone reviews" |
 | **Get playlist contents** | "List all videos in this playlist: [URL]" |
 | **Research a topic** | "Find and summarize the top 5 videos about quantum computing" |

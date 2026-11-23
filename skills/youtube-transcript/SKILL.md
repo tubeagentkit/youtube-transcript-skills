@@ -1,6 +1,6 @@
 ---
 name: youtube-transcript
-description: Calls the getyoutubetranscript.com API, which is metered - 1 credit per successful request; a new account gets 100 free credits, then plans start at $5/month for 1,000 credits. Needs an API key; the skill can create the account in the conversation from the user's email and a 6-digit code. Use when the user wants a YouTube video's transcript fetched, wants to summarize/analyze/quote a YouTube video by its spoken content, wants to search YouTube (globally or a channel handle's videos), wants a channel handle resolved to its channel ID, wants the videos in a YouTube playlist, wants a channel's Shorts, live streams, playlists or community posts, wants the videos YouTube suggests next to a video, wants a video's estimated likes and dislikes, wants a channel's banner, or wants to check their remaining API credit balance.
+description: Calls the getyoutubetranscript.com API, which is metered - 1 credit per successful request; a new account gets 100 free credits, then plans start at $5/month for 1,000 credits. Needs an API key; the skill can create the account in the conversation from the user's email and a 6-digit code. Use when the user wants a YouTube video's transcript fetched, wants to summarize/analyze/quote a YouTube video by its spoken content, wants to search YouTube (globally or a channel handle's videos), wants a channel handle resolved to its channel ID, wants the videos in a YouTube playlist, wants a channel's Shorts, live streams, playlists or community posts, wants the videos YouTube suggests next to a video, wants a video's estimated likes and dislikes, wants a video's details (views, likes, upload date, tags) or its comments, wants a channel's banner, or wants to check their remaining API credit balance.
 source: https://github.com/tubeagentkit/youtube-transcript-skills
 ---
 
@@ -285,6 +285,24 @@ successful call). YouTube no longer publishes dislikes, so `data.likes`,
 `data.dislikes`, `data.rating` and `data.view_count` are estimates from Return
 YouTube Dislike (`data.estimated` is always `true`): say so when you report
 them. The bundled `scripts/fetch_dislikes.sh <video>` wraps this call.
+
+**A video's details** - `GET /video?v=<video>` (1 credit per successful call).
+`data.title`, `data.description`, `data.channel` (`id`, `name`, `subscribers`),
+`data.views`, `data.likes`, `data.upload_date`, `data.duration` (seconds),
+`data.thumbnails` and `data.keywords` (the video's tags). `views` is the exact
+count as a digit string; `likes` and `subscribers` are YouTube's rounded labels
+("19M"), so don't do arithmetic on them. It has no transcript: use `/transcript`
+for what is said. The bundled `scripts/fetch_video_details.sh <video>` wraps
+this call.
+
+**A video's comments** - `GET /video/comments?v=<video>` (1 credit/page). Top
+comments first, each with `text`, `channel.handle`, `likes`, `replies` and
+`published_date`. For the next page send the same `v` plus `continuation` (the
+previous `data.continuation_token`, verbatim); `data.has_more` is `false` on
+the last page. A 404 `COMMENTS_DISABLED` means comments are off or the video
+does not exist. Fetch only as many pages as the task needs: each costs a
+credit. The bundled `scripts/fetch_video_comments.sh <video> [continuation]`
+wraps this call.
 
 **A channel's banner and avatar** - `GET /channel/banner?channel=@mkbhd` (1
 credit per successful call). `data.banner` holds the uncropped `original`, the
