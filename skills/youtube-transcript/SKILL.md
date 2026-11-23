@@ -179,9 +179,15 @@ curl -s "https://getyoutubetranscript.com/api/v1/transcript?v=<VIDEO_ID_OR_URL>&
   to find or quote where something is said, or wants chapters or a timeline.
   The response then also has `segments` (see below). Leave it off otherwise;
   it roughly doubles the response. Same credit cost either way.
+- `translate=<code>` is optional: add it when the user wants the video's text
+  in another language (`es`, `zh-CN`, ...). The transcript and `segments` come
+  back machine-translated, one caption line at a time so timestamps stay
+  aligned, and `data.translated_to` names the target; `language_code` is still
+  the source track. Same 1 credit. Say it is a machine translation, and quote
+  the original when exact wording matters.
 - The bundled `scripts/fetch_transcript.sh` wraps this exact call if you'd
   rather invoke a script than hand-build the curl command
-  (`fetch_transcript.sh <video> [language] [timestamps]`).
+  (`fetch_transcript.sh <video> [language] [timestamps|plain] [translate]`).
 
 Successful response:
 

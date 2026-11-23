@@ -104,7 +104,7 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 
 | Endpoint | Cost | What it does |
 |---|---|---|
-| `GET /transcript` | 1 credit | Full transcript + title/author/thumbnail for one video, with `caption_type` (manual/auto) and the language actually returned; add `timestamps=true` for per-line `segments` |
+| `GET /transcript` | 1 credit | Full transcript + title/author/thumbnail for one video, with `caption_type` (manual/auto) and the language actually returned; add `timestamps=true` for per-line `segments`, or `translate=es` (any language code) for a machine translation with timestamps kept aligned |
 | `GET /transcript/languages` | 1 credit | The caption languages a video offers (manual or auto-generated) and which one a default request returns |
 | `POST /batch` + `GET /batch` | 1 credit per successful video | Up to 100 videos in one call; poll for results (failed videos are never charged) |
 | `GET /search` | 1 credit/page | Search YouTube for videos or channels, paginated |
