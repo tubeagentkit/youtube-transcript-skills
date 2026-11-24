@@ -104,7 +104,8 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 
 | Endpoint | Cost | What it does |
 |---|---|---|
-| `GET /transcript` | 1 credit | Full transcript + title/author/thumbnail for one video, with `caption_type` (manual/auto) and the language actually returned; add `timestamps=true` for per-line `segments`, or `translate=es` (any language code) for a machine translation with timestamps kept aligned |
+| `GET /transcript` | 1 credit | Full transcript + title/author/thumbnail for one video, with `caption_type` (manual/auto) and the language actually returned; add `timestamps=true` for per-line `segments`, or `translate=es` (any language code) for a machine translation with timestamps kept aligned. For a video with no captions, `mode=auto` makes an AI speech-to-text transcript (3 credits per minute of video, up to 4 hours) |
+| `GET /transcript/jobs` | Free | Result of an AI transcript that answered `202` with a `job_id`: poll every 5 seconds until it is done |
 | `GET /transcript/languages` | 1 credit | The caption languages a video offers (manual or auto-generated) and which one a default request returns |
 | `POST /batch` + `GET /batch` | 1 credit per successful video | Up to 100 videos in one call; poll for results (failed videos are never charged) |
 | `GET /search` | 1 credit/page | Search YouTube for videos or channels, paginated |
@@ -129,7 +130,7 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 | **Scale** | $99/month | 60,000 credits/month | 600 req/min |
 
 - **1 credit = 1 successful request.** Failed calls are never charged.
-- Only `GET /credits` is free; every other endpoint costs 1 credit per successful call, whatever the plan.
+- `GET /credits` and `GET /transcript/jobs` are free; every other endpoint costs 1 credit per successful call, whatever the plan, except AI transcripts (3 credits per minute of video, rounded up, minimum 3; refunded automatically if generation fails).
 - Top-ups: $2.50 per 1,000 credits (Monthly), $1.50 per 1,000 (Annual, Starter, Pro and Scale).
 - [View pricing / manage billing →](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills)
 
@@ -141,7 +142,9 @@ All of these are documented in [`SKILL.md`](skills/youtube-transcript/SKILL.md) 
 |---|---|---|
 | `401 MISSING_API_KEY` / `INVALID_API_KEY` | No key sent, or it's wrong/revoked | Confirm `YOUTUBE_TRANSCRIPT_API_KEY` is actually set in your agent's environment, and that it starts with `sk_live_` |
 | `402 PAYMENT_REQUIRED` | Out of credits | Top up or upgrade at the [dashboard](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-transcript-skills) — don't retry the same call |
-| `404 VIDEO_UNAVAILABLE` / `TRANSCRIPT_NOT_FOUND` / `TRANSCRIPT_DISABLED` | Video doesn't exist, is private, or has no captions | Confirm the video plays and shows captions in a real browser first |
+| `404 VIDEO_UNAVAILABLE` / `TRANSCRIPT_NOT_FOUND` / `TRANSCRIPT_DISABLED` | Video doesn't exist, is private, or has no captions | Confirm the video plays in a real browser first. For a video with no captions, ask again with `mode=auto` for an AI transcript |
+| `422 LIVE_STREAM` / `TOO_LONG` / `AUDIO_UNAVAILABLE` | AI transcript refused: a live or upcoming stream, over 4 hours, or the audio can't be read | Not charged; nothing to retry |
+| `502 AI_FAILED` | The AI transcript could not be made | Credits were refunded; retry once later |
 | `404 LANGUAGE_NOT_AVAILABLE` | The video doesn't have a transcript in the language you asked for | Omit `language` to get whatever's available, or try a different one |
 | `429 RATE_LIMITED` | Too many requests for your plan tier | Back off — don't hammer it in a retry loop |
 | `503 UPSTREAM_UNAVAILABLE` / `UPSTREAM_TIMEOUT` | Transient upstream hiccup | Safe to retry once after a short delay |

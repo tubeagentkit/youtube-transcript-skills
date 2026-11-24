@@ -1,6 +1,6 @@
 ---
 name: youtube-transcript
-description: Calls the getyoutubetranscript.com API, which is metered - 1 credit per successful request; a new account gets 100 free credits, then plans start at $5/month for 1,000 credits. Needs an API key; the skill can create the account in the conversation from the user's email and a 6-digit code. Use when the user wants a YouTube video's transcript fetched, wants to summarize/analyze/quote a YouTube video by its spoken content, wants to search YouTube (globally or a channel handle's videos), wants a channel handle resolved to its channel ID, wants the videos in a YouTube playlist, wants a channel's Shorts, live streams, playlists or community posts, wants the videos YouTube suggests next to a video, wants a video's estimated likes and dislikes, wants a video's details (views, likes, upload date, tags) or its comments, wants a channel's banner, or wants to check their remaining API credit balance.
+description: Calls the getyoutubetranscript.com API, which is metered - 1 credit per successful request; a new account gets 100 free credits, then plans start at $5/month for 1,000 credits. Needs an API key; the skill can create the account in the conversation from the user's email and a 6-digit code. Use when the user wants a YouTube video's transcript fetched (including an AI speech-to-text transcript of a video with no captions, 3 credits per minute of video), wants to summarize/analyze/quote a YouTube video by its spoken content, wants to search YouTube (globally or a channel handle's videos), wants a channel handle resolved to its channel ID, wants the videos in a YouTube playlist, wants a channel's Shorts, live streams, playlists or community posts, wants the videos YouTube suggests next to a video, wants a video's estimated likes and dislikes, wants a video's details (views, likes, upload date, tags) or its comments, wants a channel's banner, or wants to check their remaining API credit balance.
 source: https://github.com/tubeagentkit/youtube-transcript-skills
 ---
 
@@ -17,7 +17,8 @@ TubeAgentKit, the team behind getyoutubetranscript.com.
 **Pricing**: the API is metered. Each successful request costs 1 credit
 (failed requests and the calls marked free below cost nothing). A new account
 gets 100 free credits; after that, plans start at $5/month for 1,000 credits.
-Tell the user this before setting up an account.
+The one exception: an AI transcript of a video with no captions costs 3
+credits per minute of video. Tell the user this before setting up an account.
 
 **Scope**: the scripts make outbound HTTPS `curl` requests only to the
 `getyoutubetranscript.com` endpoints listed below. During first-time setup,
@@ -137,10 +138,12 @@ failed calls are never charged). If a call returns `402 PAYMENT_REQUIRED`, tell
 the user they're out of credits and link them to the dashboard to top up or
 upgrade - don't retry the same call expecting a different result.
 
-**Before any call that will likely spend more than 1 credit** - a `/batch`
+**Before any call that will likely spend more than 1 credit** - an AI
+transcript (`mode=auto` or `generate`, 3 credits per minute of video), a `/batch`
 submission, or paginating through a playlist, channel, or channel search
 instead of fetching a single page - tell the user roughly how many credits it
-will cost (1 per video for a batch, 1 per page for pagination) and get a
+will cost (3 per minute of video for an AI transcript, 1 per video for a
+batch, 1 per page for pagination) and get a
 go-ahead before you start. Check `GET /credits` first to confirm there's
 enough balance; if a paginated job is large (e.g. a channel with hundreds of
 videos), say so and let the user decide whether to fetch all of it or stop
@@ -185,9 +188,11 @@ curl -s "https://getyoutubetranscript.com/api/v1/transcript?v=<VIDEO_ID_OR_URL>&
   aligned, and `data.translated_to` names the target; `language_code` is still
   the source track. Same 1 credit. Say it is a machine translation, and quote
   the original when exact wording matters.
+- `mode` is optional: `native` (default, captions only), `auto` or `generate`.
+  See "Videos with no captions" below.
 - The bundled `scripts/fetch_transcript.sh` wraps this exact call if you'd
   rather invoke a script than hand-build the curl command
-  (`fetch_transcript.sh <video> [language] [timestamps|plain] [translate]`).
+  (`fetch_transcript.sh <video> [language] [timestamps|plain] [translate] [mode]`).
 
 Successful response:
 
@@ -234,6 +239,40 @@ caption line with `start` and `duration` in seconds:
 To cite a moment, link `https://www.youtube.com/watch?v=<id>&t=<floor(start)>s`.
 Only quote times that come from `segments`; never estimate them from the
 plain `transcript`.
+
+## Videos with no captions (AI transcripts)
+
+A video with no captions answers `TRANSCRIPT_DISABLED` or
+`TRANSCRIPT_NOT_FOUND` by default. If the user still wants its text, offer an
+AI speech-to-text transcript of the audio and quote the cost first: 3 credits
+per minute of video, rounded up (a 30-minute video is 90 credits). `GET
+/video?v=<video>` (1 credit) gives the length if you need it for the quote.
+
+```bash
+curl -s "https://getyoutubetranscript.com/api/v1/transcript?v=<VIDEO>&mode=auto" \
+  -H "Authorization: Bearer $YOUTUBE_TRANSCRIPT_API_KEY"
+```
+
+- `mode=auto` returns captions when the video has any (1 credit, same answer
+  as without `mode`), otherwise an AI transcript. `mode=generate` always makes
+  an AI transcript. Prefer `auto`.
+- `language` with these modes is the language spoken in the video. Leave it
+  out to use the video's own audio language. `translate` can't be combined
+  with them (400). `timestamps=true` works.
+- The answer is the usual transcript object plus `caption_type: "ai"`,
+  `source: "ai"` and `duration_seconds`. Tell the user it is an AI transcript:
+  names and technical terms may be misheard.
+- The `X-Credits-Charged` response header says what the call cost. Reading the
+  same AI transcript again within 24 hours costs 0. Credits are taken when
+  generation starts and refunded automatically if it fails.
+- Videos up to 4 hours. Live and upcoming streams are refused.
+- If generation takes longer than about 20 seconds, the answer is `202` with
+  `data: null` and a `job` (`job_id`, `status`, `poll_interval_seconds: 5`).
+  Poll `GET /transcript/jobs?id=<job_id>` (free; add `timestamps=true` if you
+  want segments) every 5 seconds: `202` while it runs, `200` with the
+  transcript when done, or the error if it failed. Jobs are kept 7 days.
+  `scripts/fetch_transcript.sh <video> "" plain "" auto` does this polling for
+  you, for up to about 5 minutes.
 
 ## Other available endpoints
 
@@ -368,9 +407,14 @@ HTTP status:
 | 400 | `BAD_REQUEST` / `MISSING_URL` / `INVALID_URL` | Missing or malformed parameter |
 | 401 | `MISSING_API_KEY` / `INVALID_API_KEY` | No key provided, or it's invalid/revoked |
 | 402 | `PAYMENT_REQUIRED` | Out of credits - direct the user to the dashboard, don't retry. `GET /credits` confirms the balance without spending anything |
+| 402 | `PAYMENT_REQUIRED` (AI transcript) | The balance can't cover the AI transcript; `credits_required` says how many it needs |
 | 404 | `VIDEO_UNAVAILABLE` / `TRANSCRIPT_NOT_FOUND` / `TRANSCRIPT_DISABLED` | Video/resource doesn't exist, or has no transcript |
 | 404 | `LANGUAGE_NOT_AVAILABLE` | The requested `language` isn't available for this video |
+| 404 | `JOB_NOT_FOUND` | No AI transcript job with this id for this key's account |
+| 422 | `LIVE_STREAM` / `TOO_LONG` / `AUDIO_UNAVAILABLE` | AI transcript refused: live or upcoming stream, over 4 hours, or the audio can't be read. Not charged |
 | 429 | `RATE_LIMITED` | Too many requests for the key's plan tier - back off, don't hammer it in a retry loop |
+| 429 | `TOO_MANY_JOBS` | 5 AI transcripts already in progress, or too many failed today - wait for one to finish |
+| 502 | `AI_FAILED` | The AI transcript could not be made; credits were refunded |
 | 503 | `UPSTREAM_UNAVAILABLE` / `UPSTREAM_TIMEOUT` | Transient upstream issue - safe to retry once after a short delay |
 
 Report the real `message` field to the user on any error rather than a generic
